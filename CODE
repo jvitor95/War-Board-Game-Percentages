@@ -1,0 +1,290 @@
+### Procedure:
+###   War_calculator_Shell
+### Parameters:
+###   AA, a positive integer, DD, a positive integer (AA - attackers, DD - defenders)
+### Purpose:
+###   To run War_Calculator i times (i can be specified), tallying up the resulting number of wins, losses and casualties.
+### Produces:
+###  Winning percentage, a positive number, and average losses, a positive integer
+###PROBLEM: Wins, Losses and Casualties are reset to zero every time the function is called (I think) - Wins/Losses never go higher than 1.
+wins <- 0
+losses <- 0
+Casualties <- 0
+count <- 0
+AA_placeholder <- 0
+DD_placeholder <- 0
+AA_placeholder2 <- 0
+DD_placeholder2 <- 0
+
+War_Calculator_Shell <- function(AA,DD) {
+  print("Shell time baybee!")
+  if (count >= 10) {
+    print(paste("Your chances of winning are:" , ((wins/(wins + losses)) * 100) , "percent"))
+    print(paste("You will lose on average", Casualties/count , "armies"))
+    print(paste("Your count is:", count))
+    AA_placeholder <<- 0
+    DD_placeholder <<- 0
+    wins <<- 0
+    losses <<- 0
+    Casualties <<- 0
+    count <<- 0
+    stop("DONE")
+  }
+  else {
+    AA_placeholder2 <<- AA
+    DD_placeholder2 <<- DD
+    AA_placeholder <<- AA_placeholder2
+    DD_placeholder <<- DD_placeholder2
+    War_Calculator(AA_placeholder,DD_placeholder)
+  }
+}
+
+### Procedure:
+###   War_calculator
+### Parameters:
+###   AA, a positive integer, DD, a positive integer (AA - attackes, DD - defenders)
+### Purpose:
+###   To recurse until either AA or DD are 0, counting as a loss or a win
+### Produces:
+###  Nothing, it **should** change Wins, Losses and Casualties depending on the simulation outcome
+War_Calculator <- function(AA_placeholder, DD_placeholder) {
+  print(paste("your count is:", count))
+  count <<- count + 1
+  if (AA_placeholder == 0 | DD_placeholder == 0) {
+    War_Calculator_Shell(AA_placeholder2,AA_placeholder2)
+  }
+  # 3 attackers and 3 defenders
+  else if (AA_placeholder >= 3 & DD_placeholder >= 3) {
+    DRA <- sort(c(sample(1:6, 3, replace = T)))
+    DRD <- sort(c(sample(1:6, 3, replace = T)))
+    if (DRD[1] >= DRA[1] & DRD[2] >= DRA[2] & DRD[3] >= DRA[3]) {
+      AA_placeholder <<- AA_placeholder - 3
+      Casualties <<- Casualties + 3
+      if (AA_placeholder == 0) {
+        losses <<- losses + 1
+        print(paste("You have",wins, "wins"))
+        print(paste("You have",losses, "losses"))
+        print(paste("You have",Casualties, "casualties"))
+        print(paste("You have",AA_placeholder,"armies"))
+        War_Calculator(AA_placeholder,DD_placeholder)
+      } else {
+        War_Calculator(AA_placeholder,DD_placeholder)
+      }
+    }
+    else if (DRD[1] < DRA[1] & DRD[2] < DRA[2] & DRD[3] < DRA[3]) {
+      DD_placeholder <<- DD_placeholder - 3 
+      if (DD_placeholder == 0) {
+        wins <<- wins + 1
+        print(paste("You have",wins, "wins"))
+        print(paste("You have",losses, "losses"))
+        print(paste("You have",Casualties, "casualties"))
+        print(paste("You have",AA_placeholder,"armies"))
+        War_Calculator(AA_placeholder,DD_placeholder)
+      } else{ 
+        War_Calculator(AA_placeholder,DD_placeholder)
+      }
+    }
+    else if (DRD[1] >= DRA[1] & DRD[2] >= DRA[2]) {
+      AA_placeholder <<- AA_placeholder - 2
+      DD_placeholder <<- DD_placeholder - 1
+      Casualties <<- Casualties + 2
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+    else if (DRD[1] >= DRA[1] & DRD[3] >= DRA[3]) {
+      AA_placeholder <<- AA_placeholder - 2
+      DD_placeholder <<- DD_placeholder - 1
+      Casualties <<- Casualties + 2
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+    else if (DRD[2] >= DRA[2] & DRD[3] >= DRA[3]) {
+      AA_placeholder <<- AA_placeholder - 2
+      DD_placeholder <<- DD_placeholder - 1
+      Casualties <<- Casualties + 2
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+    else {
+      AA_placeholder <<- AA_placeholder - 1
+      DD_placeholder <<- DD_placeholder - 2
+      Casualties <<- Casualties + 1
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+  }
+  # 3 attackers and 2 defenders
+  else if (AA_placeholder >= 3 & DD_placeholder == 2) {
+    DRA <- sort(c(sample(1:6, 3, replace = T)))
+    DRD <- sort(c(sample(1:6, 2, replace = T)))
+    if (DRA[3] > DRD[2] & DRA[2] > DRD[1]) {
+      DD_placeholder <<- DD_placeholder - 2
+      wins <<- wins + 1
+      print(paste("You have",wins, "wins"))
+      print(paste("You have",losses, "losses"))
+      print(paste("You have",Casualties, "casualties"))
+      print(paste("You have",AA_placeholder,"armies"))
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+    else if (DRA[3] <= DRD[2] & DRA[2] <= DRD[1]) { 
+      AA_placeholder <<- AA_placeholder - 2
+      Casualties <<- Casualties + 2
+      War_Calculator(AA_placeholder,DD_placeholder)
+    } 
+    else {
+      AA_placeholder <<- AA_placeholder - 1
+      DD_placeholder <<- DD_placeholder - 1
+      Casualties <<- Casualties + 1
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+  }
+  # 3 attackers and 1 defender
+  else if (AA_placeholder >= 3 & DD_placeholder == 1) {
+    DRA <- sort(c(sample(1:6, 3, replace = T)))
+    DRD <- sort(c(sample(1:6, 1, replace = T)))
+    if (DRA[3] > DRD[1]) {
+      wins <<- wins + 1
+      DD_placeholder <<- DD_placeholder - 1
+      print(paste("You have",wins, "wins"))
+      print(paste("You have",losses, "losses"))
+      print(paste("You have",Casualties, "casualties"))
+      print(paste("You have",AA_placeholder,"armies"))
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+    else { 
+      AA_placeholder <<- AA_placeholder - 1
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+  }
+  # 3 defenders, 2 attackers
+  else if (DD_placeholder >= 3 & AA_placeholder == 2) {
+    DRA <- sort(c(sample(1:6, 2, replace = T)))
+    DRD <- sort(c(sample(1:6, 3, replace = T)))
+    if (DRD[3] >= DRA[2] & DRD[2] >= DRA[1]) {
+      AA_placeholder <<- AA_placeholder - 2
+      Casualties <<- Casualties + 2
+      losses <<- losses + 1
+      print(paste("You have",wins, "wins"))
+      print(paste("You have",losses, "losses"))
+      print(paste("You have",Casualties, "casualties"))
+      print(paste("You have",AA_placeholder,"armies"))
+      War_Calculator(AA_placeholder, DD_placeholder)
+    }
+    else if (DRA[2] > DRD[3] & DRA[1] > DRD[2]) { 
+      DD_placeholder <<- DD_placeholder - 2
+      War_Calculator(AA_placeholder,DD_placeholder)
+    } 
+    else {
+      AA_placeholder <<- AA_placeholder - 1
+      DD_placeholder <<- DD_placeholder - 1
+      Casualties <<- Casualties + 1
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+  }
+  # 3 defenders, 1 attacker
+  else if (DD_placeholder >= 3 & AA_placeholder == 1) {
+    DRA <- sort(c(sample(1:6, 1, replace = T)))
+    DRD <- sort(c(sample(1:6, 3, replace = T)))
+    if (DRD[3] >= DRA[1]) {
+      AA_placeholder < AA_placeholder - 1
+      losses <<- losses + 1
+      Casualties <<- Casualties + 1
+      print(paste("You have",wins, "wins"))
+      print(paste("You have",losses, "losses"))
+      print(paste("You have",Casualties, "casualties"))
+      print(paste("You have",AA_placeholder,"armies"))
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+    else { 
+      DD_placeholder <<- DD_placeholder - 1
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+  }
+  # 2 defenders, 2 atackers
+  else if (DD_placeholder == 2 & AA_placeholder == 2) {
+    DRA <- sort(c(sample(1:6, 2, replace = T)))
+    DRD <- sort(c(sample(1:6, 2, replace = T)))
+    if (DRD[2] >= DRA[2] & DRD[1] >= DRA[1]) {
+      AA_placeholder <<- AA_placeholder - 2
+      Casualties <<- Casualties + 2
+      losses <<- losses + 1
+      print(paste("You have",wins, "wins"))
+      print(paste("You have",losses, "losses"))
+      print(paste("You have",Casualties, "casualties"))
+      print(paste("You have",AA_placeholder,"armies"))
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+    else if (DRA[2] > DRD[2] & DRA[1] > DRD[1]) { 
+      DD_placeholder <<- DD_placeholder - 2
+      wins <<- wins + 1
+      print(paste("You have",wins, "wins"))
+      print(paste("You have",losses, "losses"))
+      print(paste("You have",Casualties, "casualties"))
+      print(paste("You have",AA_placeholder,"armies"))
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+    else {
+      AA_placeholder <<- AA_placeholder - 1
+      Casualties <<- Casualties + 1
+      DD_placeholder <<- DD_placeholder - 1
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+  }  
+  #1 defender, 2 atackers
+  else if (DD_placeholder == 1 & AA_placeholder == 2) {
+    DRA <- sort(c(sample(1:6, 2, replace = T)))
+    DRD <- sort(c(sample(1:6, 1, replace = T)))
+    if (DRD[1] >= DRA[2]) {
+      AA_placeholder <<- AA_placeholder - 1
+      Casualties <<- Casualties + 1
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+    else { 
+      DD_placeholder <<- DD_placeholder - 1
+      wins <<- wins + 1
+      print(paste("You have",wins, "wins"))
+      print(paste("You have",losses, "losses"))
+      print(paste("You have",Casualties, "casualties"))
+      War_Calculator(AA_placeholder,DD_placeholder)
+    } 
+  }
+  # 2 defender, 1 atacker
+  else if (DD_placeholder == 2 & AA_placeholder == 1) {
+    DRA <- sort(c(sample(1:6, 1, replace = T)))
+    DRD <- sort(c(sample(1:6, 2, replace = T)))
+    if (DRD[2] >= DRA[1]) {
+      AA_placeholder <<- AA_placeholder - 1
+      Casualties <<- Casualties + 1
+      losses <<- losses + 1
+      print(paste("You have",wins, "wins"))
+      print(paste("You have",losses, "losses"))
+      print(paste("You have",Casualties, "casualties"))
+      print(paste("You have",AA_placeholder,"armies"))
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+    else { 
+      DD_placeholder <<- DD_placeholder - 1
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+  }
+  # 1 defender, 1 atacker
+  else if (DD_placeholder == 1 & AA_placeholder == 1) {
+    DRA <- sort(c(sample(1:6, 1, replace = T)))
+    DRD <- sort(c(sample(1:6, 1, replace = T)))
+    if (DRD[1] >= DRA[1]) {
+      AA_placeholder <<- AA_placeholder - 1
+      Casualties <<- Casualties + 1
+      losses <<- losses + 1
+      print(paste("You have",wins, "wins"))
+      print(paste("You have",losses, "losses"))
+      print(paste("You have",Casualties, "casualties"))
+      print(paste("You have",AA_placeholder,"armies"))
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+    else { 
+      DD_placeholder <<- DD_placeholder - 1
+      wins <<- wins + 1
+      print(paste("You have",wins, "wins"))
+      print(paste("You have",losses, "losses"))
+      print(paste("You have",Casualties, "casualties"))
+      print(paste("You have",AA_placeholder,"armies"))
+      War_Calculator(AA_placeholder,DD_placeholder)
+    }
+  }
+}
